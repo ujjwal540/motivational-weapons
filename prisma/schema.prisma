@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// Site-wide settings and SEO defaults, editable from /admin/settings.
+/// Deliberately a singleton — always looked up/written via the fixed id
+/// "singleton" (see lib/settings.ts) rather than a real multi-row table.
+model SiteSettings {
+  id              String   @id @default(cuid())
+  siteName        String   @default("Motivational Weapons")
+  tagline         String?
+  logoUrl         String?
+  heroBannerUrl   String?
+  contactEmail    String?
+  contactPhone    String?
+  socialFacebook  String?
+  socialInstagram String?
+  socialYoutube   String?
+  metaTitle       String?
+  metaDescription String?
+  ogImageUrl      String?
+  twitterHandle   String?
+  updatedAt       DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+/// Application user. Auth itself is handled by Firebase Authentication
+/// (Phase 5) — `firebaseUid` links a Firebase-authenticated identity to its
+/// row here, where roles, blocks, and app-specific data live.
+model User {
+  id          String                @id @default(cuid())
+  firebaseUid String?               @unique
+  name        String?
+  email       String                @unique
+  image       String?
+  role        Role                  @default(USER)
+  blocked     Boolean               @default(false)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  posts       BlogPost[]
+  comments    Comment[]
+  newsletter  NewsletterSubscriber?
+
+  @@index([role])
+  @@map("users")
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  createdAt DateTime   @default(now())
+  posts     BlogPost[]
+  quotes    Quote[]
+  videos    Video[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  createdAt DateTime   @default(now())
+  posts     BlogPost[] @relation("BlogPostTags")
+
+  @@map("tags")
+}
+
+model Quote {
+  id          String    @id @default(cuid())
+  text        String
+  author      String    @default("Motivational Weapons")
+  isDaily     Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+  @@index([isDaily])
+  @@map("quotes")
+}
+
+model Video {
+  id              String        @id @default(cuid())
+  title           String
+  platform        VideoPlatform
+  url             String
+  thumbnailUrl    String?
+  durationSeconds Int?
+  featured        Boolean       @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  categoryId      String?
+  category        Category?     @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+  @@index([platform])
+  @@map("videos")
+}
+
+model BlogPost {
+  id              String     @id @default(cuid())
+  slug            String     @unique
+  title           String
+  excerpt         String
+  content         String
+  coverImage      String?
+  status          PostStatus @default(DRAFT)
+  featured        Boolean    @default(false)
+  readTimeMinutes Int?
+  metaTitle       String?
+  metaDescription String?
+  publishedAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  authorId        String?
+  categoryId      String?
+  author          User?      @relation(fields: [authorId], references: [id])
+  category        Category?  @relation(fields: [categoryId], references: [id])
+  comments        Comment[]
+  tags            Tag[]      @relation("BlogPostTags")
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([authorId])
+  @@map("blog_posts")
+}
+
+model Comment {
+  id        String        @id @default(cuid())
+  content   String
+  status    CommentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  authorId  String
+  postId    String
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      BlogPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([status])
+  @@map("comments")
+}
+
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  active         Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  userId         String?   @unique
+  user           User?     @relation(fields: [userId], references: [id])
+
+  @@map("newsletter_subscribers")
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+  @@map("contact_messages")
+}
+
+/// Lightweight first-party analytics — enough to power the admin dashboard's
+/// visitor/page-view charts without pulling in a third-party tracker.
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?
+  country   String?
+  device    String?
+  createdAt DateTime @default(now())
+
+  @@index([path])
+  @@index([createdAt])
+  @@map("page_views")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum VideoPlatform {
+  YOUTUBE
+  FACEBOOK
+  SHORTS
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ContactStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+}

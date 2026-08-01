@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode — parchment/ivory, kept legible but the brand lives in dark */
+    --background: 36 28% 96%;
+    --foreground: 20 25% 10%;
+    --card: 36 28% 98%;
+    --card-foreground: 20 25% 10%;
+    --popover: 36 28% 98%;
+    --popover-foreground: 20 25% 10%;
+    --primary: 38 78% 46%;
+    --primary-foreground: 20 25% 8%;
+    --secondary: 20 25% 12%;
+    --secondary-foreground: 36 28% 96%;
+    --muted: 34 20% 90%;
+    --muted-foreground: 20 10% 35%;
+    --accent: 14 78% 45%;
+    --accent-foreground: 36 28% 98%;
+    --border: 30 15% 85%;
+    --input: 30 15% 85%;
+    --ring: 38 78% 46%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 36 28% 98%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode — the brand default: near-black ember bed, gold + flame accents */
+    --background: 20 16% 6%;
+    --foreground: 40 30% 93%;
+    --card: 20 16% 9%;
+    --card-foreground: 40 30% 93%;
+    --popover: 20 16% 9%;
+    --popover-foreground: 40 30% 93%;
+    --primary: 38 82% 56%;
+    --primary-foreground: 20 25% 8%;
+    --secondary: 20 14% 14%;
+    --secondary-foreground: 40 30% 93%;
+    --muted: 20 14% 14%;
+    --muted-foreground: 30 12% 62%;
+    --accent: 14 82% 52%;
+    --accent-foreground: 40 30% 96%;
+    --border: 22 14% 18%;
+    --input: 22 14% 18%;
+    --ring: 38 82% 56%;
+    --destructive: 0 68% 48%;
+    --destructive-foreground: 40 30% 96%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  /* Signature element: the "ember line" — a flickering gold-to-flame
+     gradient rule used to mark thresholds (below the navbar, above the
+     footer's legal bar, active nav state). Ties every section back to the
+     brand's flaming-sword mark without repeating the icon itself. */
+  .ember-line {
+    position: relative;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--primary)) 20%,
+      hsl(var(--accent)) 50%,
+      hsl(var(--primary)) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: ember-flicker 6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ember-line {
+      animation: none;
+    }
+  }
+}
+
+@keyframes ember-flicker {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.85;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
