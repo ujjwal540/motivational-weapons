@@ -21,7 +21,7 @@ export default function AiCoachPage() {
         }
         description="Tell it what you're working through. It'll skip the fluff and give you something you can actually do."
       />
-      <section className="container max-w-2xl pb-24">
+      <section className="container max-w-5xl pb-24">
         <CoachChat />
       </section>
     </>

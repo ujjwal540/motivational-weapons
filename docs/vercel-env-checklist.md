@@ -71,10 +71,11 @@ Do not commit `CRON_SECRET` to GitHub. Add the same secret value to Vercel's
 Production Environment Variables. Vercel Cron sends it as
 `Authorization: Bearer <CRON_SECRET>` when it calls `/api/cron/content`.
 
-The daily content job runs at 04:00 UTC through Vercel Cron. It imports the
-latest six uploads from `@MotivationalWeapons`, features the newest one, and
-publishes one original Groq-generated blog post with a branded generated cover
-image. Change the schedule in `vercel.json` if your preferred fixed time is
+Vercel Cron runs two automatic content jobs: `06:00 UTC` publishes the morning
+quote, syncs the latest six uploads from `@MotivationalWeapons`, features the
+newest YouTube video, and publishes one original Groq-generated blog post with
+a branded generated cover image. `21:00 UTC` publishes a separate good-night
+quote. Change the schedules in `vercel.json` if your preferred fixed times are
 different.
 
 ## Local development

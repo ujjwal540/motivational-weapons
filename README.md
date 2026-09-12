@@ -34,8 +34,9 @@
 - [Recommended Production Setup](#️-recommended-production-setup)
 - [Folder Structure](#-folder-structure)
 - [Build Log — Phases 1 through 9](#-build-log)
+- [Current Features](#-current-features)
+- [Automation](#-automation)
 - [Security Note](#-security-note)
-- [What's Next](#-whats-next)
 
 ---
 
@@ -49,7 +50,7 @@ with real database-backed CRUD, moderation, analytics, and site settings.
 Every phase below shipped with a green build, a clean lint pass, and a
 verification checklist — nothing marked "done" without proof.
 
-| 🎨 Branded design system | 🗄️ Real Postgres + Prisma | 🔐 Firebase-gated admin | 🤖 Streaming AI coach |
+| 🎨 Premium dark UI | 🗄️ Real Postgres + Prisma | 🔐 Firebase-gated admin | 🤖 Public AI coach |
 |:---:|:---:|:---:|:---:|
 | Ember/flame token system, dark by default | 10 models, fully seeded | Session cookies, role-based access | Groq · Llama 3.3 · free tier |
 
@@ -68,9 +69,9 @@ verification checklist — nothing marked "done" without proof.
 | `/` | The full hero build — stats bar, pillars, featured quote & video, testimonials |
 | `/daily-motivation` | Hit **"New Quote"** to cycle, then **"Share"** (Web Share API) |
 | `/quotes` | Filter by category — Discipline, Resilience, Success, Focus, Self-Belief |
-| `/videos` | Platform tabs — All / YouTube / Facebook Reels / Shorts |
+| `/videos` | YouTube-only motivation library with featured playback cards |
 | `/blog` | Full blog with statically generated post pages |
-| `/ai-coach` | Sign in, then talk to the streaming AI motivation coach |
+| `/ai-coach` | Ask the public AI Coach for practical support without signing in |
 | `/admin/login` | Admin dashboard entry point (role-gated) |
 
 ---
@@ -267,15 +268,15 @@ testimonials, newsletter CTA
 **Daily Motivation** · interactive quote panel ("New Quote" cycles randomly,
 "Share" uses the Web Share API with clipboard fallback)
 **Quotes** · client-side category filter
-**Videos** · platform tabs over gradient-thumbnail placeholder cards (no
-external/copyrighted media)
+**Videos** · YouTube-only motivation library with automatic channel syncing
+and graceful fallback links when the database is empty
 **Blog** · featured post + grid, dynamic `[slug]` route with
 `generateStaticParams` — all posts pre-rendered at build time
 **Contact** · `react-hook-form` + `zod` validated form
 **FAQ** · accordion Q&A · **Privacy/Terms** · placeholder legal pages
 
 **Checklist**
-- [x] 19/19 routes compile, 0 errors (6 blog posts pre-rendered)
+- [x] Production build compiles all public, admin, API, and legacy routes
 - [x] Every nav/footer link resolves — zero 404s
 - [x] Contact form validates client-side before "submitting"
 - [x] Interactive pieces isolated as `"use client"`; pages stay server
@@ -283,6 +284,27 @@ external/copyrighted media)
 - [x] Zero external image/font network calls
 
 </details>
+
+## ✨ Current Features
+
+- Premium dark-first interface with cyan/violet accents, glass panels, responsive
+  navigation, floating hero cards, hover elevation, and reduced-motion support.
+- Public AI Coach with quick prompts, streaming Groq responses, and a local
+  practical-motivation fallback when the AI provider is unavailable.
+- Quotes with copy/share actions, YouTube-only video cards, generated blog cover
+  art, fallback content for empty databases, and responsive mobile layouts.
+
+## ⏱️ Automation
+
+Vercel Cron runs the content system without manual publishing:
+
+- `06:00 UTC`: publishes the morning quote, syncs the latest YouTube uploads,
+  and creates one Groq-generated article with a branded OG image.
+- `21:00 UTC`: publishes a separate good-night quote.
+
+Both jobs revalidate the homepage, motivation, quotes, videos, and blog routes.
+Set `CRON_SECRET`, `DATABASE_URL`, `GROQ_API_KEY`, and `YOUTUBE_API_KEY` in
+Vercel before deploying. Cron times are UTC; Nepal time is UTC+5:45.
 
 <details>
 <summary><b>Phase 4 — Database & Prisma Schema</b> ✅</summary>
@@ -311,7 +333,7 @@ visitors see.
 > ```
 
 **Checklist**
-- [x] `build`/`lint`/`prettier` all clean (19/19 routes, unchanged)
+- [x] `build`/`lint`/`prettier` all clean with the current App Router surface
 - [x] Every relation has matching `fields`/`references`; sensible
       `onDelete` behavior (`Cascade` for comments, `SetNull` elsewhere)
 - [x] Seed data is idempotent (`upsert` everywhere)
