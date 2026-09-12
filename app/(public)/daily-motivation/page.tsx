@@ -4,6 +4,7 @@ import { Flame } from "lucide-react";
 import { PageHeader } from "@/components/hero/page-header";
 import { QuoteCard } from "@/components/quote/quote-card";
 import { DailyQuotePanel } from "@/components/quote/daily-quote-panel";
+import { QUOTES } from "@/constants/quotes";
 import { prisma } from "@/lib/prisma";
 import type { Quote } from "@/types";
 
@@ -26,12 +27,12 @@ export default async function DailyMotivationPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const mappedQuotes: Quote[] = quotes.map((quote) => ({
+  const mappedQuotes: Quote[] = quotes.length > 0 ? quotes.map((quote) => ({
     id: quote.id,
     text: quote.text,
     author: quote.author,
     category: quote.category?.name ?? "Uncategorized",
-  }));
+  })) : QUOTES;
 
   const todayIndex = (new Date().getDay() + 6) % 7;
   const weekQuotes = mappedQuotes.slice(0, 7);
@@ -55,6 +56,27 @@ export default async function DailyMotivationPage() {
       />
 
       <DailyQuotePanel initialQuote={todaysQuote} quotes={mappedQuotes} />
+
+      <section className="container grid gap-6 pb-16 md:grid-cols-2">
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Morning motivation
+          </p>
+          <p className="mt-4 font-display text-2xl leading-snug tracking-wide">
+            Start before you feel ready. The first disciplined decision sets the
+            direction for the whole day.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Night motivation
+          </p>
+          <p className="mt-4 font-display text-2xl leading-snug tracking-wide">
+            Rest without guilt. Review what you learned, release what you could
+            not control, and return stronger tomorrow.
+          </p>
+        </div>
+      </section>
 
       <section className="container pb-24">
         <div className="mb-8 flex items-center gap-2">

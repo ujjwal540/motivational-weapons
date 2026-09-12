@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/hero/page-header";
 import { QuotesGrid } from "@/components/quote/quotes-grid";
+import { QUOTES } from "@/constants/quotes";
 import { prisma } from "@/lib/prisma";
 import type { Quote } from "@/types";
 
@@ -22,12 +23,12 @@ export default async function QuotesPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const mappedQuotes: Quote[] = quotes.map((quote) => ({
+  const mappedQuotes: Quote[] = quotes.length > 0 ? quotes.map((quote) => ({
     id: quote.id,
     text: quote.text,
     author: quote.author,
     category: quote.category?.name ?? "Uncategorized",
-  }));
+  })) : QUOTES;
 
   return (
     <>

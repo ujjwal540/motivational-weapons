@@ -90,7 +90,7 @@ export default async function HomePage() {
         platform: "YouTube",
         duration: "8:42",
         thumbnail: "",
-        url: "#",
+        url: "https://www.youtube.com/results?search_query=5am+morning+motivation+discipline",
       };
 
   return (

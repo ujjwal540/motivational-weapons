@@ -4,6 +4,7 @@ import { PostStatus, Role, VideoPlatform } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { generateDailyArticle } from "@/lib/ai-coach";
+import { QUOTES } from "@/constants/quotes";
 import { slugify } from "@/lib/utils";
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
@@ -117,6 +118,41 @@ export async function syncLatestYouTubeVideos() {
   });
   await prisma.video.update({ where: { id: `youtube-${newest}` }, data: { featured: true } });
   return videoIds.length;
+}
+
+export async function publishDailyQuote() {
+  const dateKey = new Date().toISOString().slice(0, 10);
+  const dayNumber = Math.floor(Date.now() / 86_400_000);
+  const quote = QUOTES[dayNumber % QUOTES.length];
+  const category = await prisma.category.upsert({
+    where: { slug: slugify(quote.category) },
+    update: {},
+    create: { name: quote.category, slug: slugify(quote.category) },
+  });
+
+  await prisma.quote.updateMany({
+    where: { isDaily: true },
+    data: { isDaily: false },
+  });
+
+  return prisma.quote.upsert({
+    where: { id: `daily-${dateKey}` },
+    update: {
+      text: quote.text,
+      author: quote.author,
+      categoryId: category.id,
+      isDaily: true,
+      publishedAt: new Date(),
+    },
+    create: {
+      id: `daily-${dateKey}`,
+      text: quote.text,
+      author: quote.author,
+      categoryId: category.id,
+      isDaily: true,
+      publishedAt: new Date(),
+    },
+  });
 }
 
 export async function createDailyBlogPost() {

@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
-import { createDailyBlogPost, syncLatestYouTubeVideos } from "@/lib/content-automation";
+import {
+  createDailyBlogPost,
+  publishDailyQuote,
+  syncLatestYouTubeVideos,
+} from "@/lib/content-automation";
 
 export const maxDuration = 60;
 
@@ -11,11 +15,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [videoResult, postResult] = await Promise.allSettled([
+  const [quoteResult, videoResult, postResult] = await Promise.allSettled([
+    publishDailyQuote(),
     syncLatestYouTubeVideos(),
     createDailyBlogPost(),
   ]);
 
+  if (quoteResult.status === "rejected") {
+    console.error("Daily quote publishing failed", quoteResult.reason);
+  }
   if (videoResult.status === "rejected") {
     console.error("YouTube content sync failed", videoResult.reason);
   }
@@ -23,17 +31,28 @@ export async function GET(request: Request) {
     console.error("Daily blog generation failed", postResult.reason);
   }
 
-  if (videoResult.status === "rejected" && postResult.status === "rejected") {
+  if (
+    quoteResult.status === "rejected" &&
+    videoResult.status === "rejected" &&
+    postResult.status === "rejected"
+  ) {
     return NextResponse.json({ error: "Content automation failed" }, { status: 500 });
   }
 
   revalidatePath("/");
+  revalidatePath("/daily-motivation");
+  revalidatePath("/quotes");
   revalidatePath("/videos");
   revalidatePath("/blog");
   return NextResponse.json({
     ok: true,
+    quote: quoteResult.status === "fulfilled" ? quoteResult.value.id : null,
     videos: videoResult.status === "fulfilled" ? videoResult.value : null,
     post: postResult.status === "fulfilled" ? postResult.value.slug : null,
-    warnings: postResult.status === "rejected" ? ["Daily blog generation failed."] : [],
+    warnings: [
+      ...(quoteResult.status === "rejected" ? ["Daily quote publishing failed."] : []),
+      ...(videoResult.status === "rejected" ? ["YouTube video sync failed."] : []),
+      ...(postResult.status === "rejected" ? ["Daily blog generation failed."] : []),
+    ],
   });
 }

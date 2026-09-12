@@ -223,12 +223,6 @@ export function CoachChat() {
           Send
         </Button>
       </form>
-      <p className="text-center text-xs text-muted-foreground">
-        The AI Coach can listen and offer practical support, but it is not a
-        therapist or emergency service. If you may hurt yourself or cannot
-        stay safe, call emergency services now. In the US or Canada, call or
-        text 988; elsewhere, contact your local crisis line.
-      </p>
     </div>
   );
 }

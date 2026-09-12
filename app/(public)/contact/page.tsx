@@ -28,8 +28,8 @@ const CONTACT_DETAILS = [
   {
     icon: Mail,
     label: "Email",
-    value: "hello@motivationalweapons.com",
-    href: "mailto:hello@motivationalweapons.com",
+    value: "motivationalweapons@gmail.com",
+    href: "mailto:motivationalweapons@gmail.com",
   },
   {
     icon: MapPin,

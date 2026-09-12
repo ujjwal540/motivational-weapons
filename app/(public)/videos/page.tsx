@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/hero/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VideoCard } from "@/components/video/video-card";
+import { VIDEOS } from "@/constants/videos";
 import { prisma } from "@/lib/prisma";
 import type { Video } from "@/types";
 
@@ -38,7 +39,8 @@ function VideoGrid({
   if (filteredVideos.length === 0) {
     return (
       <p className="py-12 text-center text-muted-foreground">
-        No videos in this category yet — check back soon.
+        More videos are being forged. Browse the YouTube motivation library
+        while new uploads are added.
       </p>
     );
   }
@@ -58,7 +60,7 @@ export default async function VideosPage() {
     orderBy: { publishedAt: "desc" },
   });
 
-  const mappedVideos: Video[] = videos.map((video) => ({
+  const mappedVideos: Video[] = videos.length > 0 ? videos.map((video) => ({
     id: video.id,
     title: video.title,
     platform:
@@ -76,7 +78,7 @@ export default async function VideosPage() {
     thumbnail: video.thumbnailUrl ?? "",
     url: video.url,
     featured: video.featured,
-  }));
+  })) : VIDEOS;
 
   return (
     <>

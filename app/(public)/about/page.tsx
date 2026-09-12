@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Flame, ShieldCheck, Sword, Target } from "lucide-react";
+import { Flame, Mail, ShieldCheck, Sword, Target } from "lucide-react";
 
 import { PageHeader } from "@/components/hero/page-header";
 import {
@@ -72,6 +72,13 @@ export default function AboutPage() {
             small team obsessed with one idea: your struggle is not your
             weakness. It&rsquo;s the raw steel your strength is made from.
           </p>
+          <a
+            href="mailto:motivationalweapons@gmail.com"
+            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+          >
+            <Mail className="h-4 w-4" />
+            motivationalweapons@gmail.com
+          </a>
         </div>
         <div className="rounded-2xl border border-border bg-card p-8">
           <p className="font-display text-2xl leading-snug tracking-wide text-foreground sm:text-3xl">
