@@ -48,6 +48,9 @@ DIRECT_URL=postgresql://postgres:<PASSWORD>@nopnqmeqxsewnpvruqrv.supabase.co:543
 2. In Vercel Settings -> Git, set the Production Branch to `main`.
 3. Import it into Vercel or redeploy the latest `main` deployment.
 4. Add the variables above in the Production environment.
+	`DATABASE_URL` must be added before runtime; Prisma Client generation can
+	complete during the build without it, but database-backed pages will not
+	work until the real Supabase URL is configured.
 5. Run Prisma migrations against Supabase.
 6. Seed the database if you want the starter content.
 7. Deploy.
