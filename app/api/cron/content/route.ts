@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 
 import {
   createDailyBlogPost,
-  publishDailyQuote,
+  publishScheduledQuote,
   syncLatestYouTubeVideos,
 } from "@/lib/content-automation";
 
@@ -15,26 +15,32 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [quoteResult, videoResult, postResult] = await Promise.allSettled([
-    publishDailyQuote(),
-    syncLatestYouTubeVideos(),
-    createDailyBlogPost(),
-  ]);
+  const edition = new URL(request.url).searchParams.get("edition") === "night"
+    ? "night"
+    : "morning";
+  const results = edition === "night"
+    ? await Promise.allSettled([publishScheduledQuote("night")])
+    : await Promise.allSettled([
+        publishScheduledQuote("morning"),
+        syncLatestYouTubeVideos(),
+        createDailyBlogPost(),
+      ]);
+  const [quoteResult, videoResult, postResult] = results;
 
   if (quoteResult.status === "rejected") {
-    console.error("Daily quote publishing failed", quoteResult.reason);
+    console.error(`${edition} quote publishing failed`, quoteResult.reason);
   }
-  if (videoResult.status === "rejected") {
+  if (videoResult?.status === "rejected") {
     console.error("YouTube content sync failed", videoResult.reason);
   }
-  if (postResult.status === "rejected") {
+  if (postResult?.status === "rejected") {
     console.error("Daily blog generation failed", postResult.reason);
   }
 
   if (
     quoteResult.status === "rejected" &&
-    videoResult.status === "rejected" &&
-    postResult.status === "rejected"
+    (!videoResult || videoResult.status === "rejected") &&
+    (!postResult || postResult.status === "rejected")
   ) {
     return NextResponse.json({ error: "Content automation failed" }, { status: 500 });
   }
@@ -46,13 +52,14 @@ export async function GET(request: Request) {
   revalidatePath("/blog");
   return NextResponse.json({
     ok: true,
+    edition,
     quote: quoteResult.status === "fulfilled" ? quoteResult.value.id : null,
-    videos: videoResult.status === "fulfilled" ? videoResult.value : null,
-    post: postResult.status === "fulfilled" ? postResult.value.slug : null,
+    videos: videoResult?.status === "fulfilled" ? videoResult.value : null,
+    post: postResult?.status === "fulfilled" ? postResult.value.slug : null,
     warnings: [
       ...(quoteResult.status === "rejected" ? ["Daily quote publishing failed."] : []),
-      ...(videoResult.status === "rejected" ? ["YouTube video sync failed."] : []),
-      ...(postResult.status === "rejected" ? ["Daily blog generation failed."] : []),
+      ...(videoResult?.status === "rejected" ? ["YouTube video sync failed."] : []),
+      ...(postResult?.status === "rejected" ? ["Daily blog generation failed."] : []),
     ],
   });
 }

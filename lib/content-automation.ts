@@ -114,39 +114,58 @@ export async function syncLatestYouTubeVideos() {
   return videoIds.length;
 }
 
-export async function publishDailyQuote() {
+const NIGHT_QUOTES = [
+  "You did enough for today. Rest is not quitting; it is how you return with strength tomorrow.",
+  "Let the day end without carrying every mistake into tomorrow. Keep the lesson, release the weight, and begin again.",
+  "Progress is also knowing when to pause. Close the day with gratitude for one small win and trust yourself to continue tomorrow.",
+] as const;
+
+export async function publishScheduledQuote(edition: "morning" | "night") {
   const dateKey = new Date().toISOString().slice(0, 10);
   const dayNumber = Math.floor(Date.now() / 86_400_000);
-  const quote = QUOTES[dayNumber % QUOTES.length];
+  const isMorning = edition === "morning";
+  const quote = isMorning
+    ? QUOTES[dayNumber % QUOTES.length]
+    : {
+        text: NIGHT_QUOTES[dayNumber % NIGHT_QUOTES.length],
+        author: "Motivational Weapons",
+        category: "Good Night",
+      };
   const category = await prisma.category.upsert({
     where: { slug: slugify(quote.category) },
     update: {},
     create: { name: quote.category, slug: slugify(quote.category) },
   });
 
-  await prisma.quote.updateMany({
-    where: { isDaily: true },
-    data: { isDaily: false },
-  });
+  if (isMorning) {
+    await prisma.quote.updateMany({
+      where: { isDaily: true },
+      data: { isDaily: false },
+    });
+  }
 
   return prisma.quote.upsert({
-    where: { id: `daily-${dateKey}` },
+    where: { id: `${edition}-${dateKey}` },
     update: {
       text: quote.text,
       author: quote.author,
       categoryId: category.id,
-      isDaily: true,
+      isDaily: isMorning,
       publishedAt: new Date(),
     },
     create: {
-      id: `daily-${dateKey}`,
+      id: `${edition}-${dateKey}`,
       text: quote.text,
       author: quote.author,
       categoryId: category.id,
-      isDaily: true,
+      isDaily: isMorning,
       publishedAt: new Date(),
     },
   });
+}
+
+export function publishDailyQuote() {
+  return publishScheduledQuote("morning");
 }
 
 export async function createDailyBlogPost() {
