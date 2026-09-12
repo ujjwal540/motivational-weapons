@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { CommentsSection } from "@/components/blog/comments-section";
 
 export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({ select: { slug: true } });
+  const posts: Array<{ slug: string }> = await prisma.blogPost.findMany({
+    select: { slug: true },
+  });
   return posts.map((post) => ({ slug: post.slug }));
 }
 
