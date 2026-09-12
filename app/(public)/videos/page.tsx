@@ -14,6 +14,16 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+type VideoRecord = {
+  id: string;
+  title: string;
+  platform: "YOUTUBE" | "FACEBOOK" | "SHORTS";
+  durationSeconds: number | null;
+  thumbnailUrl: string | null;
+  url: string;
+  featured: boolean;
+};
+
 function VideoGrid({
   videos,
   platform,
@@ -43,7 +53,7 @@ function VideoGrid({
 }
 
 export default async function VideosPage() {
-  const videos = await prisma.video.findMany({
+  const videos: VideoRecord[] = await prisma.video.findMany({
     include: { category: true },
     orderBy: { publishedAt: "desc" },
   });
