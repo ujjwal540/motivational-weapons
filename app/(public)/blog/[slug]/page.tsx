@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -78,12 +79,21 @@ export default async function BlogPostPage({
 
       <div className="flex flex-col gap-5 text-foreground/90">
         <p className="text-lg leading-relaxed">{post.excerpt}</p>
-        <p className="leading-relaxed text-muted-foreground">
-          The full article is being forged — this placeholder confirms the
-          layout, routing, and metadata for every post are wired correctly. Once
-          the content layer lands in a later phase, this space will hold the
-          complete, rich-text article body straight from the admin dashboard.
-        </p>
+        {post.coverImage ? (
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            width={1200}
+            height={630}
+            className="rounded-xl border border-border"
+            priority
+          />
+        ) : null}
+        {post.content.split(/\r?\n+/).filter(Boolean).map((paragraph, index) => (
+          <p key={`${post.id}-paragraph-${index}`} className="leading-relaxed text-muted-foreground">
+            {paragraph}
+          </p>
+        ))}
       </div>
 
       <CommentsSection slug={post.slug} />
