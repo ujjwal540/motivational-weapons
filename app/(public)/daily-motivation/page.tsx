@@ -16,7 +16,12 @@ export const metadata: Metadata = {
 const WEEK_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 export default async function DailyMotivationPage() {
-  const quotes = await prisma.quote.findMany({
+  const quotes: Array<{
+    id: string;
+    text: string;
+    author: string;
+    category: { name: string } | null;
+  }> = await prisma.quote.findMany({
     include: { category: true },
     orderBy: { createdAt: "desc" },
   });

@@ -12,7 +12,12 @@ export const metadata: Metadata = {
 };
 
 export default async function QuotesPage() {
-  const quotes = await prisma.quote.findMany({
+  const quotes: Array<{
+    id: string;
+    text: string;
+    author: string;
+    category: { name: string } | null;
+  }> = await prisma.quote.findMany({
     include: { category: true },
     orderBy: { createdAt: "desc" },
   });
