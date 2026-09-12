@@ -35,17 +35,17 @@
     --card-foreground: 40 30% 93%;
     --popover: 20 16% 9%;
     --popover-foreground: 40 30% 93%;
-    --primary: 38 82% 56%;
-    --primary-foreground: 20 25% 8%;
-    --secondary: 20 14% 14%;
+    --primary: 190 92% 62%;
+    --primary-foreground: 205 35% 8%;
+    --secondary: 220 18% 13%;
     --secondary-foreground: 40 30% 93%;
     --muted: 20 14% 14%;
     --muted-foreground: 30 12% 62%;
-    --accent: 14 82% 52%;
+    --accent: 267 82% 68%;
     --accent-foreground: 40 30% 96%;
-    --border: 22 14% 18%;
-    --input: 22 14% 18%;
-    --ring: 38 82% 56%;
+    --border: 220 18% 21%;
+    --input: 220 18% 21%;
+    --ring: 190 92% 62%;
     --destructive: 0 68% 48%;
     --destructive-foreground: 40 30% 96%;
   }
@@ -56,6 +56,7 @@
 
   body {
     @apply bg-background text-foreground;
+    background-image: radial-gradient(circle at 12% 8%, hsl(267 82% 68% / 0.08), transparent 28rem), radial-gradient(circle at 88% 18%, hsl(190 92% 62% / 0.07), transparent 24rem);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
@@ -72,13 +73,39 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      hsl(var(--primary)) 20%,
-      hsl(var(--accent)) 50%,
-      hsl(var(--primary)) 80%,
+      hsl(var(--accent)) 20%,
+      hsl(var(--primary)) 50%,
+      hsl(var(--accent)) 80%,
       transparent 100%
     );
     background-size: 200% 100%;
     animation: ember-flicker 6s ease-in-out infinite;
+  }
+
+  .glass-panel {
+    background: linear-gradient(135deg, hsl(var(--card) / 0.78), hsl(var(--card) / 0.38));
+    border: 1px solid hsl(var(--border) / 0.8);
+    box-shadow: 0 24px 80px hsl(220 50% 4% / 0.28);
+    backdrop-filter: blur(18px);
+  }
+
+  .hero-grid {
+    background-image: linear-gradient(hsl(var(--border) / 0.22) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border) / 0.22) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 88%);
+  }
+
+  .hero-orb {
+    animation: orb-drift 9s ease-in-out infinite;
+    filter: blur(1px);
+  }
+
+  .hero-float {
+    animation: hero-float 6s ease-in-out infinite;
+  }
+
+  .hero-float-delayed {
+    animation: hero-float 7s ease-in-out 1.2s infinite;
   }
 
   .blog-card {
@@ -110,7 +137,22 @@
     .blog-reveal {
       animation: none;
     }
+    .hero-orb,
+    .hero-float,
+    .hero-float-delayed {
+      animation: none;
+    }
   }
+}
+
+@keyframes orb-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(18px, -14px, 0) scale(1.06); }
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
 }
 
 @keyframes ember-flicker {

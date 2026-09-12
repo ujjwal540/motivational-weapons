@@ -23,7 +23,7 @@ export function VideoCard({
     <a
       href={video.url}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors hover:border-primary/50",
+        "group flex flex-col overflow-hidden rounded-2xl border border-border bg-card/80 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5",
         className
       )}
     >
@@ -34,23 +34,23 @@ export function VideoCard({
             alt={video.title}
             width={320}
             height={180}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover brightness-90 transition duration-500 group-hover:scale-105 group-hover:brightness-105"
           />
         ) : null}
         <div className="ember-line absolute inset-x-0 top-0" />
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/90 text-primary-foreground transition-transform group-hover:scale-110">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
           <Play className="h-5 w-5 translate-x-0.5 fill-current" />
         </span>
         <span className="absolute bottom-2 right-2 rounded bg-background/80 px-1.5 py-0.5 text-xs font-medium text-foreground">
           {video.duration}
         </span>
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
           <PlatformIcon className="h-3.5 w-3.5" />
           {video.platform}
         </span>
-        <h3 className="font-display text-base leading-snug tracking-wide text-foreground">
+        <h3 className="font-display text-lg leading-snug tracking-wide text-foreground">
           {video.title}
         </h3>
       </div>

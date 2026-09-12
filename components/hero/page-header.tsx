@@ -19,7 +19,7 @@ export function PageHeader({
   return (
     <section
       className={cn(
-        "container flex flex-col items-center gap-5 py-16 text-center sm:py-20",
+        "container relative flex flex-col items-center gap-5 overflow-hidden py-16 text-center sm:py-24",
         className
       )}
     >
@@ -28,11 +28,11 @@ export function PageHeader({
           {eyebrow}
         </Badge>
       ) : null}
-      <h1 className="max-w-2xl font-display text-4xl leading-tight tracking-wide sm:text-6xl">
+      <h1 className="max-w-3xl font-display text-5xl leading-[0.95] tracking-wide sm:text-7xl">
         {title}
       </h1>
       {description ? (
-        <p className="max-w-xl text-muted-foreground">{description}</p>
+        <p className="max-w-xl text-base leading-7 text-muted-foreground">{description}</p>
       ) : null}
       {children}
       <div className="ember-line max-w-xs" />

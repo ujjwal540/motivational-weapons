@@ -91,21 +91,22 @@ export function CoachChat() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex min-h-[24rem] flex-col gap-5 rounded-2xl border border-border bg-card p-6">
+      <div className="glass-panel flex min-h-[30rem] flex-col gap-5 rounded-3xl p-4 sm:p-6">
         {messages.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 py-10 text-center">
-            <Flame className="h-8 w-8 text-primary" />
-            <p className="max-w-sm text-sm text-muted-foreground">
+          <div className="flex flex-1 flex-col items-center justify-center gap-5 py-10 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 text-primary shadow-lg shadow-primary/10"><Flame className="h-7 w-7" /></div>
+            <p className="max-w-sm text-base leading-7 text-muted-foreground">
               You do not have to explain everything perfectly. Tell the coach
               what hurts, what feels stuck, or what you need help carrying
               today. Start with one of these:
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="grid w-full max-w-lg gap-2 sm:grid-cols-2">
               {STARTER_PROMPTS.map((prompt) => (
                 <Button
                   key={prompt}
                   variant="outline"
                   size="sm"
+                  className="h-auto justify-start rounded-xl px-4 py-3 text-left text-xs leading-5"
                   onClick={() => void sendMessage(prompt)}
                   disabled={isStreaming}
                 >
@@ -135,7 +136,7 @@ export function CoachChat() {
                 </Avatar>
                 <div
                   className={cn(
-                    "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+                    "max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm",
                     message.role === "assistant"
                       ? "bg-secondary text-secondary-foreground"
                       : "bg-primary text-primary-foreground"
@@ -154,7 +155,7 @@ export function CoachChat() {
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-      <form onSubmit={handleSubmit} className="flex items-end gap-3">
+      <form onSubmit={handleSubmit} className="glass-panel flex items-end gap-3 rounded-2xl p-2">
         <Textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
@@ -165,7 +166,7 @@ export function CoachChat() {
             }
           }}
           placeholder="What are you working through today?"
-          className="min-h-[3rem] flex-1 resize-none"
+          className="min-h-[3rem] flex-1 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0"
           maxLength={4000}
         />
         <Button

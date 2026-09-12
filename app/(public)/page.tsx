@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flame, Mail } from "lucide-react";
+import { ArrowRight, BrainCircuit, Flame, Mail, Sparkles, Target } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -96,26 +96,46 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="container flex flex-col items-center gap-6 py-24 text-center">
-        <Badge variant="ember" className="gap-1.5">
-          <Flame className="h-3.5 w-3.5" />
-          Daily power, forged for you
-        </Badge>
-        <h1 className="max-w-3xl font-display text-5xl leading-tight tracking-wide sm:text-7xl">
-          TURN YOUR STRUGGLES INTO YOUR{" "}
-          <span className="text-primary">STRENGTH</span>
-        </h1>
-        <p className="max-w-xl text-muted-foreground">
-          Welcome to Motivational Weapons — where every quote, video, and story
-          is forged to keep you moving when quitting feels easier.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button size="lg" variant="ember" asChild>
-            <Link href="/daily-motivation">Get Today&rsquo;s Motivation</Link>
-          </Button>
-          <Button size="lg" variant="outline" asChild>
-            <Link href="/videos">Watch the Videos</Link>
-          </Button>
+      <section className="relative isolate overflow-hidden border-b border-border/70">
+        <div className="hero-grid absolute inset-0 -z-10 opacity-70" />
+        <div className="hero-orb absolute -left-24 top-16 -z-10 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
+        <div className="hero-orb absolute -right-20 top-32 -z-10 h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
+        <div className="container grid min-h-[calc(100vh-4.5rem)] items-center gap-14 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
+          <div className="flex max-w-3xl flex-col items-start gap-7">
+            <Badge variant="ember" className="gap-2 border-primary/30 bg-primary/10 px-3 py-1.5">
+              <Sparkles className="h-3.5 w-3.5" /> AI-powered personal growth
+            </Badge>
+            <h1 className="font-display text-6xl leading-[0.92] tracking-[0.02em] sm:text-8xl">
+              TRAIN YOUR <span className="bg-gradient-to-r from-primary via-cyan-300 to-accent bg-clip-text text-transparent">MIND.</span><br />
+              BUILD YOUR <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">FUTURE.</span>
+            </h1>
+            <p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
+              A sharper daily system for discipline, resilience, and momentum. Get the next useful step when life feels loud.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="lg" variant="ember" asChild>
+                <Link href="/ai-coach">Start with the AI Coach <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/daily-motivation">Open today&rsquo;s weapon</Link>
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-5 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="inline-flex items-center gap-2"><Target className="h-4 w-4 text-primary" /> Daily focus</span>
+              <span className="inline-flex items-center gap-2"><BrainCircuit className="h-4 w-4 text-accent" /> Practical support</span>
+            </div>
+          </div>
+          <div className="relative mx-auto min-h-[23rem] w-full max-w-md">
+            <div className="hero-float glass-panel absolute left-0 top-8 w-[78%] rounded-2xl p-6">
+              <div className="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-muted-foreground"><span>Today&rsquo;s focus</span><Flame className="h-4 w-4 text-primary" /></div>
+              <p className="mt-8 font-display text-3xl leading-tight tracking-wide">One clear action beats ten perfect plans.</p>
+              <div className="mt-8 flex items-center gap-2 text-sm text-primary"><span className="h-2 w-2 rounded-full bg-primary" /> Momentum is live</div>
+            </div>
+            <div className="hero-float-delayed glass-panel absolute bottom-4 right-0 w-[72%] rounded-2xl p-5">
+              <div className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/15 text-accent"><BrainCircuit className="h-4 w-4" /></span><div><p className="text-sm font-medium">AI Coach</p><p className="text-xs text-muted-foreground">Ready when you are</p></div></div>
+              <p className="mt-5 text-sm leading-6 text-muted-foreground">Turn the problem into a smaller next step.</p>
+            </div>
+          </div>
         </div>
       </section>
 

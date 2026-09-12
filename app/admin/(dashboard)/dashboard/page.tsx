@@ -83,11 +83,12 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-3xl tracking-wide">
+      <div className="glass-panel rounded-3xl p-6 sm:p-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Personal growth command center</p>
+        <h1 className="mt-3 font-display text-4xl tracking-wide">
           DASHBOARD <span className="text-primary">OVERVIEW</span>
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
           A snapshot of everything live on Motivational Weapons right now.
         </p>
       </div>
@@ -108,7 +109,7 @@ export default async function AdminDashboardPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {QUICK_LINKS.map((link) => (
             <Link key={link.href} href={link.href}>
-              <Card className="h-full transition-colors hover:border-primary/50">
+              <Card className="h-full rounded-2xl transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
                 <CardHeader className="flex flex-row items-start gap-4 space-y-0">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent/15 text-accent">
                     <link.icon className="h-5 w-5" />

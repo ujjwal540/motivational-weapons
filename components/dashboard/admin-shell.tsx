@@ -27,12 +27,12 @@ export function AdminShell({
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-border bg-card/50 lg:flex lg:flex-col">
+      <aside className="hidden w-72 shrink-0 border-r border-border/70 bg-card/40 lg:flex lg:flex-col">
         <Link
           href="/admin/dashboard"
-          className="flex items-center gap-2 border-b border-border px-6 py-5"
+          className="flex items-center gap-2 border-b border-border/70 px-6 py-6"
         >
           <Flame className="h-5 w-5 text-primary" />
           <span className="font-display text-sm tracking-wide">
@@ -78,7 +78,7 @@ export function AdminShell({
           </div>
         </header>
 
-        <main className="flex-1 bg-secondary/10 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 bg-secondary/5 p-4 sm:p-6 lg:p-10">
           {children}
         </main>
       </div>
