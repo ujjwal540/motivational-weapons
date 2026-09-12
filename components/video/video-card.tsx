@@ -1,4 +1,5 @@
 import { Facebook, Play, Youtube, Zap } from "lucide-react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import type { Video } from "@/types";
@@ -28,9 +29,11 @@ export function VideoCard({
     >
       <div className="relative flex aspect-video items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-secondary to-accent/40">
         {video.thumbnail ? (
-          <img
+          <Image
             src={video.thumbnail}
-            alt=""
+            alt={video.title}
+            width={320}
+            height={180}
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : null}

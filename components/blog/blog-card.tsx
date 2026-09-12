@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -26,10 +27,12 @@ export function BlogCard({
       )}
     >
       {post.coverImage ? (
-        <div className="aspect-video overflow-hidden bg-secondary">
-          <img
+        <div className="relative aspect-video overflow-hidden bg-secondary">
+          <Image
             src={post.coverImage}
-            alt=""
+            alt={post.title}
+            width={320}
+            height={180}
             className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
           />
         </div>
