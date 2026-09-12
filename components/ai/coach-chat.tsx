@@ -1,12 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Flame, Loader2, Send } from "lucide-react";
 
-import { useAuth } from "@/context/auth-context";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -23,19 +20,7 @@ const STARTER_PROMPTS = [
   "I feel like a failure and don't know where to start.",
 ] as const;
 
-function initialsOf(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
 export function CoachChat() {
-  const pathname = usePathname();
-  const loginNext = pathname ?? "/";
-  const { user, loading: authLoading } = useAuth();
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [input, setInput] = React.useState("");
   const [isStreaming, setIsStreaming] = React.useState(false);
@@ -104,26 +89,6 @@ export function CoachChat() {
     void sendMessage(input);
   }
 
-  if (!authLoading && !user) {
-    return (
-      <div className="rounded-2xl border border-dashed border-border p-10 text-center">
-        <Flame className="mx-auto h-8 w-8 text-primary" />
-        <p className="mt-3 font-display text-xl tracking-wide">
-          Sign in to talk to the coach
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          The AI Coach is free, but signing in keeps the conversation personal
-          to you.
-        </p>
-        <Button variant="ember" className="mt-5" asChild>
-          <Link href={`/login?next=${encodeURIComponent(loginNext)}`}>
-            Sign In
-          </Link>
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex min-h-[24rem] flex-col gap-5 rounded-2xl border border-border bg-card p-6">
@@ -165,14 +130,7 @@ export function CoachChat() {
                       <Flame className="h-4 w-4 text-primary" />
                     </AvatarFallback>
                   ) : (
-                    <>
-                      {user?.photoURL ? (
-                        <AvatarImage src={user.photoURL} alt="" />
-                      ) : null}
-                      <AvatarFallback>
-                        {initialsOf(user?.displayName ?? user?.email ?? "U")}
-                      </AvatarFallback>
-                    </>
+                    <AvatarFallback>YOU</AvatarFallback>
                   )}
                 </Avatar>
                 <div

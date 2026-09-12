@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getCurrentUser } from "@/lib/auth";
 import { streamCoachReply, type CoachMessage } from "@/lib/ai-coach";
+import { getFallbackMotivation } from "@/lib/motivation-fallback";
 
 // Keep both the conversation length and each message's size bounded — this
 // is a per-request cost (a real Groq API call), so an unbounded body is a
@@ -23,15 +23,14 @@ const chatSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const user = await getCurrentUser();
-  if (!user) {
-    return NextResponse.json(
-      { error: "Sign in to chat with the AI Coach." },
-      { status: 401 }
-    );
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const parsed = chatSchema.safeParse(await request.json());
+  const parsed = chatSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Invalid request." },
@@ -54,9 +53,9 @@ export async function POST(request: NextRequest) {
     groqStream = await streamCoachReply(messages);
   } catch (error) {
     console.error("Failed to start AI Coach stream:", error);
-    return NextResponse.json(
-      { error: "The AI Coach is unavailable right now. Try again shortly." },
-      { status: 502 }
+    return new Response(
+      getFallbackMotivation(messages[messages.length - 1].content),
+      { headers: { "Content-Type": "text/plain; charset=utf-8" } }
     );
   }
 

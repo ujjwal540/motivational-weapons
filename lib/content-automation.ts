@@ -88,10 +88,7 @@ export async function syncLatestYouTubeVideos() {
       where: { id: `youtube-${videoId}` },
       update: {
         title: item.snippet.title,
-        platform:
-          durationSeconds !== null && durationSeconds <= 60
-            ? VideoPlatform.SHORTS
-            : VideoPlatform.YOUTUBE,
+        platform: VideoPlatform.YOUTUBE,
         thumbnailUrl: item.snippet.thumbnails?.high?.url ?? null,
         durationSeconds,
         publishedAt: new Date(item.snippet.publishedAt),
@@ -99,10 +96,7 @@ export async function syncLatestYouTubeVideos() {
       create: {
         id: `youtube-${videoId}`,
         title: item.snippet.title,
-        platform:
-          durationSeconds !== null && durationSeconds <= 60
-            ? VideoPlatform.SHORTS
-            : VideoPlatform.YOUTUBE,
+        platform: VideoPlatform.YOUTUBE,
         url: `https://www.youtube.com/watch?v=${videoId}`,
         thumbnailUrl: item.snippet.thumbnails?.high?.url ?? null,
         durationSeconds,
