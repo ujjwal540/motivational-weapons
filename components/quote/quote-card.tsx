@@ -1,3 +1,5 @@
+"use client";
+
 import { Copy, Flame, Quote as QuoteIcon, Share2 } from "lucide-react";
 import * as React from "react";
 
