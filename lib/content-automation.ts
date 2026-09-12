@@ -8,6 +8,33 @@ import { slugify } from "@/lib/utils";
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 const CHANNEL_HANDLE = "@MotivationalWeapons";
+const MOTIVATION_TERMS = [
+  "motivat",
+  "discipline",
+  "mindset",
+  "success",
+  "focus",
+  "habit",
+  "confidence",
+  "resilien",
+  "strength",
+  "growth",
+  "goal",
+  "life",
+  "self",
+  "power",
+  "overcome",
+  "consisten",
+  "build",
+  "quit",
+  "pain",
+  "struggle",
+] as const;
+
+function isMotivationalVideo(title: string) {
+  const normalizedTitle = title.toLowerCase();
+  return MOTIVATION_TERMS.some((term) => normalizedTitle.includes(term));
+}
 
 function parseDuration(value: string) {
   const match = value.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
@@ -39,7 +66,10 @@ export async function syncLatestYouTubeVideos() {
       contentDetails: { videoId: string };
     }>;
   }>("playlistItems", { part: "snippet,contentDetails", playlistId: uploadsPlaylist, maxResults: "6" });
-  const videoIds = (playlist.items ?? []).map((item) => item.contentDetails.videoId);
+  const motivationalItems = (playlist.items ?? []).filter((item) =>
+    isMotivationalVideo(item.snippet.title)
+  );
+  const videoIds = motivationalItems.map((item) => item.contentDetails.videoId);
   if (videoIds.length === 0) return 0;
 
   const details = await youtubeRequest<{ items?: Array<{ id: string; contentDetails: { duration: string } }> }>(
@@ -50,30 +80,41 @@ export async function syncLatestYouTubeVideos() {
     (details.items ?? []).map((item) => [item.id, parseDuration(item.contentDetails.duration)])
   );
 
-  for (const item of playlist.items ?? []) {
+  for (const item of motivationalItems) {
     const videoId = item.contentDetails.videoId;
+    const durationSeconds = durations.get(videoId) ?? null;
     await prisma.video.upsert({
       where: { id: `youtube-${videoId}` },
       update: {
         title: item.snippet.title,
+        platform:
+          durationSeconds !== null && durationSeconds <= 60
+            ? VideoPlatform.SHORTS
+            : VideoPlatform.YOUTUBE,
         thumbnailUrl: item.snippet.thumbnails?.high?.url ?? null,
-        durationSeconds: durations.get(videoId) ?? null,
+        durationSeconds,
         publishedAt: new Date(item.snippet.publishedAt),
       },
       create: {
         id: `youtube-${videoId}`,
         title: item.snippet.title,
-        platform: VideoPlatform.YOUTUBE,
+        platform:
+          durationSeconds !== null && durationSeconds <= 60
+            ? VideoPlatform.SHORTS
+            : VideoPlatform.YOUTUBE,
         url: `https://www.youtube.com/watch?v=${videoId}`,
         thumbnailUrl: item.snippet.thumbnails?.high?.url ?? null,
-        durationSeconds: durations.get(videoId) ?? null,
+        durationSeconds,
         publishedAt: new Date(item.snippet.publishedAt),
       },
     });
   }
 
   const newest = videoIds[0];
-  await prisma.video.updateMany({ where: { platform: VideoPlatform.YOUTUBE }, data: { featured: false } });
+  await prisma.video.updateMany({
+    where: { platform: { in: [VideoPlatform.YOUTUBE, VideoPlatform.SHORTS] } },
+    data: { featured: false },
+  });
   await prisma.video.update({ where: { id: `youtube-${newest}` }, data: { featured: true } });
   return videoIds.length;
 }

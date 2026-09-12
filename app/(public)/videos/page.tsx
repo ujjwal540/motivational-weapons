@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "Watch Motivational Weapons videos — YouTube, Facebook Reels, and Shorts, all in one place.",
 };
 
+export const dynamic = "force-dynamic";
+
 function VideoGrid({
   videos,
   platform,
