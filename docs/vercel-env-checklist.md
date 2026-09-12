@@ -45,11 +45,12 @@ DIRECT_URL=postgresql://postgres:<PASSWORD>@nopnqmeqxsewnpvruqrv.supabase.co:543
 ## Minimum production steps
 
 1. Push the repo to GitHub.
-2. Import it into Vercel.
-3. Add the variables above.
-4. Run Prisma migrations against Supabase.
-5. Seed the database if you want the starter content.
-6. Deploy.
+2. In Vercel Settings -> Git, set the Production Branch to `main`.
+3. Import it into Vercel or redeploy the latest `main` deployment.
+4. Add the variables above in the Production environment.
+5. Run Prisma migrations against Supabase.
+6. Seed the database if you want the starter content.
+7. Deploy.
 
 ## What to put where
 
@@ -62,6 +63,10 @@ DIRECT_URL=postgresql://postgres:<PASSWORD>@nopnqmeqxsewnpvruqrv.supabase.co:543
 - `GROQ_API_KEY`: from Groq, if you use the AI coach
 - `YOUTUBE_API_KEY`: from Google Cloud with YouTube Data API v3 enabled
 - `CRON_SECRET`: a random secret used by the scheduled content route
+
+Do not commit `CRON_SECRET` to GitHub. Add the same secret value to Vercel's
+Production Environment Variables. Vercel Cron sends it as
+`Authorization: Bearer <CRON_SECRET>` when it calls `/api/cron/content`.
 
 The daily content job runs at 04:00 UTC through Vercel Cron. It imports the
 latest six uploads from `@MotivationalWeapons`, features the newest one, and
