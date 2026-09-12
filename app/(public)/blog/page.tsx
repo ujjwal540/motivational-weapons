@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/hero/page-header";
 import { BlogCard } from "@/components/blog/blog-card";
+import { BLOG_POSTS } from "@/constants/blog-posts";
 import { prisma } from "@/lib/prisma";
 import type { BlogPost } from "@/types";
 
@@ -29,7 +30,7 @@ export default async function BlogPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const mappedPosts: BlogPost[] = posts.map((post) => ({
+  const mappedPosts: BlogPost[] = posts.length > 0 ? posts.map((post) => ({
     id: post.id,
     slug: post.slug,
     title: post.title,
@@ -40,7 +41,7 @@ export default async function BlogPage() {
     date: (post.publishedAt ?? post.createdAt).toISOString(),
     readTime: post.readTimeMinutes ? `${post.readTimeMinutes} min read` : "5 min read",
     featured: post.featured,
-  }));
+  })) : BLOG_POSTS;
 
   const featured = mappedPosts.find((post) => post.featured) ?? mappedPosts[0];
   const rest = mappedPosts.filter((post) => post.id !== featured?.id);
