@@ -22,7 +22,7 @@ export function BlogCard({
     <Link
       href={`/blog/${post.slug}`}
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors hover:border-primary/50",
+        "blog-card group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
         className
       )}
     >
@@ -33,8 +33,9 @@ export function BlogCard({
             alt={post.title}
             width={320}
             height={180}
-            className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div className="absolute inset-x-0 bottom-0 h-1 bg-primary" />
         </div>
       ) : null}
       <div className="flex flex-1 flex-col gap-4 p-6">

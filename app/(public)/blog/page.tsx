@@ -41,7 +41,10 @@ export default async function BlogPage() {
     date: (post.publishedAt ?? post.createdAt).toISOString(),
     readTime: post.readTimeMinutes ? `${post.readTimeMinutes} min read` : "5 min read",
     featured: post.featured,
-  })) : BLOG_POSTS;
+  })) : BLOG_POSTS.map((post) => ({
+    ...post,
+    coverImage: `/api/content/og?title=${encodeURIComponent(post.title)}`,
+  }));
 
   const featured = mappedPosts.find((post) => post.featured) ?? mappedPosts[0];
   const rest = mappedPosts.filter((post) => post.id !== featured?.id);
@@ -59,13 +62,13 @@ export default async function BlogPage() {
       />
       <section className="container pb-24">
         {featured ? (
-          <div className="mb-10">
+          <div className="blog-reveal mb-10">
             <BlogCard post={featured} className="sm:p-8" />
           </div>
         ) : null}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((post) => (
-            <BlogCard key={post.id} post={post} />
+            <BlogCard key={post.id} post={post} className="blog-reveal" />
           ))}
         </div>
       </section>

@@ -77,7 +77,7 @@ export default async function BlogPostPage({
         title: fallback!.title,
         excerpt: fallback!.excerpt,
         content: fallback!.excerpt,
-        coverImage: null,
+        coverImage: `/api/content/og?title=${encodeURIComponent(fallback!.title)}`,
         category: fallback!.category,
         author: fallback!.author,
         publishedAt: new Date(fallback!.date),
