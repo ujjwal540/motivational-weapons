@@ -12,7 +12,19 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await prisma.blogPost.findMany({
+  const posts: Array<{
+    id: string;
+    slug: string;
+    title: string;
+    excerpt: string;
+    coverImage: string | null;
+    category: { name: string } | null;
+    author: { name: string | null; email: string } | null;
+    publishedAt: Date | null;
+    createdAt: Date;
+    readTimeMinutes: number | null;
+    featured: boolean;
+  }> = await prisma.blogPost.findMany({
     include: { category: true, author: true },
     orderBy: { createdAt: "desc" },
   });
