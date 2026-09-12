@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/hero/page-header";
 import { BlogCard } from "@/components/blog/blog-card";
-import { BLOG_POSTS } from "@/constants/blog-posts";
+import { prisma } from "@/lib/prisma";
+import type { BlogPost } from "@/types";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -10,8 +11,27 @@ export const metadata: Metadata = {
     "Articles on discipline, resilience, and mindset from Motivational Weapons.",
 };
 
-export default function BlogPage() {
-  const [featured, ...rest] = BLOG_POSTS;
+export default async function BlogPage() {
+  const posts = await prisma.blogPost.findMany({
+    include: { category: true, author: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const mappedPosts: BlogPost[] = posts.map((post) => ({
+    id: post.id,
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    coverImage: post.coverImage ?? undefined,
+    category: post.category?.name ?? "Uncategorized",
+    author: post.author?.name ?? post.author?.email ?? "Motivational Weapons",
+    date: (post.publishedAt ?? post.createdAt).toISOString(),
+    readTime: post.readTimeMinutes ? `${post.readTimeMinutes} min read` : "5 min read",
+    featured: post.featured,
+  }));
+
+  const featured = mappedPosts.find((post) => post.featured) ?? mappedPosts[0];
+  const rest = mappedPosts.filter((post) => post.id !== featured?.id);
 
   return (
     <>

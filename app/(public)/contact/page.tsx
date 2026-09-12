@@ -10,6 +10,7 @@ import {
 
 import { PageHeader } from "@/components/hero/page-header";
 import { ContactForm } from "@/components/forms/contact-form";
+import { SOCIAL_LINKS } from "@/constants/social-links";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -39,9 +40,9 @@ const CONTACT_DETAILS = [
 ] as const;
 
 const SOCIALS = [
-  { icon: Facebook, label: "Facebook", href: "https://facebook.com" },
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com" },
-  { icon: Youtube, label: "YouTube", href: "https://youtube.com" },
+  { icon: Facebook, label: "Facebook", href: SOCIAL_LINKS.facebook },
+  { icon: Instagram, label: "Instagram", href: SOCIAL_LINKS.instagram },
+  { icon: Youtube, label: "YouTube", href: SOCIAL_LINKS.youtube },
 ] as const;
 
 export default function ContactPage() {
@@ -91,6 +92,8 @@ export default function ContactPage() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
+                  target="_blank"
+                  rel="noreferrer"
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
                 >
                   <social.icon className="h-4 w-4" />

@@ -27,6 +27,13 @@ export function VideoCard({
       )}
     >
       <div className="relative flex aspect-video items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-secondary to-accent/40">
+        {video.thumbnail ? (
+          <img
+            src={video.thumbnail}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : null}
         <div className="ember-line absolute inset-x-0 top-0" />
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/90 text-primary-foreground transition-transform group-hover:scale-110">
           <Play className="h-5 w-5 translate-x-0.5 fill-current" />

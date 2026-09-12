@@ -132,6 +132,36 @@ npm run db:studio       # optional — browse data visually
 Docker is optional — useful for a reproducible local database, not required
 for a Vercel deploy.
 
+For a copy-paste Vercel setup checklist, see [docs/vercel-env-checklist.md](docs/vercel-env-checklist.md).
+For a ready-to-paste env template, see [docs/production.env.example](docs/production.env.example).
+For the follow-up checks after deployment, see [docs/post-deploy-checklist.md](docs/post-deploy-checklist.md).
+
+### Vercel paste order
+
+When Vercel asks for environment variables, add them in this order:
+
+1. `NEXT_PUBLIC_SITE_URL`
+2. `NEXT_PUBLIC_FIREBASE_API_KEY`
+3. `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+4. `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+5. `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+6. `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+7. `NEXT_PUBLIC_FIREBASE_APP_ID`
+8. `DATABASE_URL`
+9. `DIRECT_URL`
+10. `FIREBASE_PROJECT_ID`
+11. `FIREBASE_CLIENT_EMAIL`
+12. `FIREBASE_PRIVATE_KEY`
+13. `CLOUDINARY_CLOUD_NAME`
+14. `CLOUDINARY_API_KEY`
+15. `CLOUDINARY_API_SECRET`
+16. `GROQ_API_KEY`
+17. `GROQ_MODEL`
+18. `YOUTUBE_API_KEY`
+19. `CRON_SECRET`
+
+Leave `NEXT_PUBLIC_USE_FAKE_AUTH` empty in production.
+
 📄 Setup docs: [`docs/vercel-env-checklist.md`](docs/vercel-env-checklist.md) · [`docs/production.env.example`](docs/production.env.example)
 
 **Deployment checklist**

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Facebook, Instagram, Youtube, Phone } from "lucide-react";
 
 import { BrandMark } from "@/components/navbar/brand-mark";
+import { SOCIAL_LINKS } from "@/constants/social-links";
 
 const EXPLORE_LINKS = [
   { href: "/daily-motivation", label: "Daily Motivation" },
@@ -91,22 +92,28 @@ export function Footer() {
             </h3>
             <div className="mt-4 flex items-center gap-3">
               <Link
-                href="https://facebook.com"
+                href={SOCIAL_LINKS.facebook}
                 aria-label="Facebook"
+                target="_blank"
+                rel="noreferrer"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link
-                href="https://instagram.com"
+                href={SOCIAL_LINKS.instagram}
                 aria-label="Instagram"
+                target="_blank"
+                rel="noreferrer"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Instagram className="h-5 w-5" />
               </Link>
               <Link
-                href="https://youtube.com"
+                href={SOCIAL_LINKS.youtube}
                 aria-label="YouTube"
+                target="_blank"
+                rel="noreferrer"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Youtube className="h-5 w-5" />

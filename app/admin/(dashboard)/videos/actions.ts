@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 
 const videoSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
@@ -40,6 +41,15 @@ function parseVideoFormData(formData: FormData) {
   });
 }
 
+async function resolveThumbnailUrl(formData: FormData) {
+  const thumbnailFile = formData.get("thumbnailFile");
+  if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
+    return uploadImageToCloudinary(thumbnailFile, "motivational-weapons/videos");
+  }
+
+  return String(formData.get("thumbnailUrl") || "").trim() || null;
+}
+
 export async function createVideo(
   _prevState: VideoFormState | undefined,
   formData: FormData
@@ -52,10 +62,12 @@ export async function createVideo(
   }
 
   try {
+    const thumbnailUrl = await resolveThumbnailUrl(formData);
+
     await prisma.video.create({
       data: {
         ...parsed.data,
-        thumbnailUrl: parsed.data.thumbnailUrl || null,
+        thumbnailUrl,
         publishedAt: new Date(),
       },
     });
@@ -80,9 +92,11 @@ export async function updateVideo(
   }
 
   try {
+    const thumbnailUrl = await resolveThumbnailUrl(formData);
+
     await prisma.video.update({
       where: { id },
-      data: { ...parsed.data, thumbnailUrl: parsed.data.thumbnailUrl || null },
+      data: { ...parsed.data, thumbnailUrl },
     });
   } catch {
     return { message: "Something went wrong updating the video." };

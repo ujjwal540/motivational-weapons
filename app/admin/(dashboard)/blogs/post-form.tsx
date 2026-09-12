@@ -41,6 +41,7 @@ export function PostForm({
     status: "DRAFT" | "PUBLISHED";
     categoryId: string | null;
     featured: boolean;
+    coverImage?: string | null;
   };
 }) {
   const [state, formAction] = useActionState(action, undefined);
@@ -48,7 +49,7 @@ export function PostForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(defaultValues?.slug));
 
   return (
-    <form action={formAction} className="flex max-w-2xl flex-col gap-5">
+    <form action={formAction} encType="multipart/form-data" className="flex max-w-2xl flex-col gap-5">
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">Title</Label>
         <Input
@@ -114,6 +115,25 @@ export function PostForm({
         <p className="text-xs text-muted-foreground">
           Plain text for now — a rich-text editor lands in a later phase.
         </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="coverImageUrl">Cover image URL (optional)</Label>
+        <Input
+          id="coverImageUrl"
+          name="coverImageUrl"
+          type="url"
+          placeholder="https://..."
+          defaultValue={defaultValues?.coverImage ?? ""}
+        />
+        <p className="text-xs text-muted-foreground">
+          Add a direct URL or upload a file below.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="coverImageFile">Or upload cover image</Label>
+        <Input id="coverImageFile" name="coverImageFile" type="file" accept="image/*" />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

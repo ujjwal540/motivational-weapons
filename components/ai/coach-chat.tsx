@@ -19,7 +19,8 @@ interface ChatMessage {
 const STARTER_PROMPTS = [
   "I keep putting off the thing I know I need to do.",
   "How do I stay disciplined when I don't feel motivated?",
-  "I had a rough week and want to reset.",
+  "I feel low and stuck after a difficult week.",
+  "I feel like a failure and don't know where to start.",
 ] as const;
 
 function initialsOf(name: string) {
@@ -130,9 +131,9 @@ export function CoachChat() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4 py-10 text-center">
             <Flame className="h-8 w-8 text-primary" />
             <p className="max-w-sm text-sm text-muted-foreground">
-              Tell the coach what you&rsquo;re up against — a stalled goal, a
-              rough week, or a habit you can&rsquo;t stick to. Or start with one
-              of these:
+              You do not have to explain everything perfectly. Tell the coach
+              what hurts, what feels stuck, or what you need help carrying
+              today. Start with one of these:
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {STARTER_PROMPTS.map((prompt) => (
@@ -223,9 +224,10 @@ export function CoachChat() {
         </Button>
       </form>
       <p className="text-center text-xs text-muted-foreground">
-        The AI Coach offers motivation and practical next steps — it&rsquo;s not
-        a therapist. If you&rsquo;re in crisis, please contact a crisis line or
-        emergency services.
+        The AI Coach can listen and offer practical support, but it is not a
+        therapist or emergency service. If you may hurt yourself or cannot
+        stay safe, call emergency services now. In the US or Canada, call or
+        text 988; elsewhere, contact your local crisis line.
       </p>
     </div>
   );

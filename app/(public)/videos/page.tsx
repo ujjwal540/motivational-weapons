@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/hero/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VideoCard } from "@/components/video/video-card";
-import { VIDEOS } from "@/constants/videos";
+import { prisma } from "@/lib/prisma";
+import type { Video } from "@/types";
 
 export const metadata: Metadata = {
   title: "Videos",
@@ -12,15 +13,17 @@ export const metadata: Metadata = {
 };
 
 function VideoGrid({
+  videos,
   platform,
 }: {
+  videos: Video[];
   platform?: "YouTube" | "Facebook" | "Shorts";
 }) {
-  const videos = platform
-    ? VIDEOS.filter((video) => video.platform === platform)
-    : VIDEOS;
+  const filteredVideos = platform
+    ? videos.filter((video) => video.platform === platform)
+    : videos;
 
-  if (videos.length === 0) {
+  if (filteredVideos.length === 0) {
     return (
       <p className="py-12 text-center text-muted-foreground">
         No videos in this category yet — check back soon.
@@ -30,14 +33,39 @@ function VideoGrid({
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {videos.map((video) => (
+      {filteredVideos.map((video) => (
         <VideoCard key={video.id} video={video} />
       ))}
     </div>
   );
 }
 
-export default function VideosPage() {
+export default async function VideosPage() {
+  const videos = await prisma.video.findMany({
+    include: { category: true },
+    orderBy: { publishedAt: "desc" },
+  });
+
+  const mappedVideos: Video[] = videos.map((video) => ({
+    id: video.id,
+    title: video.title,
+    platform:
+      video.platform === "YOUTUBE"
+        ? "YouTube"
+        : video.platform === "FACEBOOK"
+          ? "Facebook"
+          : "Shorts",
+    duration:
+      video.durationSeconds != null
+        ? `${Math.floor(video.durationSeconds / 60)}:${String(
+            video.durationSeconds % 60
+          ).padStart(2, "0")}`
+        : "Watch",
+    thumbnail: video.thumbnailUrl ?? "",
+    url: video.url,
+    featured: video.featured,
+  }));
+
   return (
     <>
       <PageHeader
@@ -58,16 +86,16 @@ export default function VideosPage() {
             <TabsTrigger value="shorts">Shorts</TabsTrigger>
           </TabsList>
           <TabsContent value="all" className="w-full">
-            <VideoGrid />
+            <VideoGrid videos={mappedVideos} />
           </TabsContent>
           <TabsContent value="youtube" className="w-full">
-            <VideoGrid platform="YouTube" />
+            <VideoGrid videos={mappedVideos} platform="YouTube" />
           </TabsContent>
           <TabsContent value="facebook" className="w-full">
-            <VideoGrid platform="Facebook" />
+            <VideoGrid videos={mappedVideos} platform="Facebook" />
           </TabsContent>
           <TabsContent value="shorts" className="w-full">
-            <VideoGrid platform="Shorts" />
+            <VideoGrid videos={mappedVideos} platform="Shorts" />
           </TabsContent>
         </Tabs>
       </section>

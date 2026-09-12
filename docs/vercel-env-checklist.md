@@ -29,6 +29,8 @@ These must stay server-side in Vercel:
 - `CLOUDINARY_API_SECRET`
 - `GROQ_API_KEY`
 - `GROQ_MODEL`
+- `YOUTUBE_API_KEY`
+- `CRON_SECRET`
 
 ## Supabase connection strings
 
@@ -48,6 +50,24 @@ DIRECT_URL=postgresql://postgres:<PASSWORD>@nopnqmeqxsewnpvruqrv.supabase.co:543
 4. Run Prisma migrations against Supabase.
 5. Seed the database if you want the starter content.
 6. Deploy.
+
+## What to put where
+
+- `NEXT_PUBLIC_SITE_URL`: your Vercel domain, such as `https://your-app.vercel.app`
+- `DATABASE_URL`: Supabase pooled connection on port `6543`
+- `DIRECT_URL`: Supabase direct connection on port `5432`
+- `NEXT_PUBLIC_*` Firebase values: from Firebase web app config
+- `FIREBASE_*` values: from the Firebase service account JSON
+- `CLOUDINARY_*`: from your Cloudinary dashboard, if you use uploads
+- `GROQ_API_KEY`: from Groq, if you use the AI coach
+- `YOUTUBE_API_KEY`: from Google Cloud with YouTube Data API v3 enabled
+- `CRON_SECRET`: a random secret used by the scheduled content route
+
+The daily content job runs at 04:00 UTC through Vercel Cron. It imports the
+latest six uploads from `@MotivationalWeapons`, features the newest one, and
+publishes one original Groq-generated blog post with a branded generated cover
+image. Change the schedule in `vercel.json` if your preferred fixed time is
+different.
 
 ## Local development
 

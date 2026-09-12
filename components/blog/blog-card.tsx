@@ -21,10 +21,20 @@ export function BlogCard({
     <Link
       href={`/blog/${post.slug}`}
       className={cn(
-        "group flex h-full flex-col gap-4 rounded-lg border border-border bg-card p-6 shadow-sm transition-colors hover:border-primary/50",
+        "group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors hover:border-primary/50",
         className
       )}
     >
+      {post.coverImage ? (
+        <div className="aspect-video overflow-hidden bg-secondary">
+          <img
+            src={post.coverImage}
+            alt=""
+            className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+          />
+        </div>
+      ) : null}
+      <div className="flex flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="rounded-full bg-secondary px-2.5 py-1 font-medium text-secondary-foreground">
           {post.category}
@@ -41,6 +51,7 @@ export function BlogCard({
           Read
           <ArrowUpRight className="h-3.5 w-3.5" />
         </span>
+      </div>
       </div>
     </Link>
   );

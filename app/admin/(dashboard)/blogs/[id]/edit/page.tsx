@@ -46,6 +46,7 @@ export default async function EditPostPage({
           status: post.status,
           categoryId: post.categoryId,
           featured: post.featured,
+          coverImage: post.coverImage,
         }}
       />
     </div>

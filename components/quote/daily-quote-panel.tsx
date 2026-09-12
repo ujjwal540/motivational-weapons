@@ -5,15 +5,20 @@ import { RefreshCcw, Share2, Check } from "lucide-react";
 
 import { QuoteCard } from "@/components/quote/quote-card";
 import { Button } from "@/components/ui/button";
-import { QUOTES } from "@/constants/quotes";
 import type { Quote } from "@/types";
 
-export function DailyQuotePanel({ initialQuote }: { initialQuote: Quote }) {
+export function DailyQuotePanel({
+  initialQuote,
+  quotes,
+}: {
+  initialQuote: Quote;
+  quotes: Quote[];
+}) {
   const [quote, setQuote] = React.useState(initialQuote);
   const [copied, setCopied] = React.useState(false);
 
   function nextQuote() {
-    const others = QUOTES.filter((q) => q.id !== quote.id);
+    const others = quotes.filter((q) => q.id !== quote.id);
     const random = others[Math.floor(Math.random() * others.length)];
     setQuote(random ?? quote);
   }

@@ -14,9 +14,9 @@ import { QuoteCard } from "@/components/quote/quote-card";
 import { VideoCard } from "@/components/video/video-card";
 import { TestimonialCard } from "@/components/cards/testimonial-card";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
-import { TODAYS_QUOTE } from "@/constants/quotes";
-import { VIDEOS } from "@/constants/videos";
+import { prisma } from "@/lib/prisma";
 import { STATS, TESTIMONIALS } from "@/constants/site-content";
+import type { Quote, Video } from "@/types";
 
 const PILLARS = [
   {
@@ -36,8 +36,62 @@ const PILLARS = [
   },
 ] as const;
 
-export default function HomePage() {
-  const featuredVideo = VIDEOS.find((video) => video.featured) ?? VIDEOS[0];
+export default async function HomePage() {
+  const [dailyQuote, featuredVideo] = await Promise.all([
+    prisma.quote.findFirst({
+      where: { isDaily: true },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.video.findFirst({
+      where: { featured: true },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const quote: Quote = dailyQuote
+    ? {
+        id: dailyQuote.id,
+        text: dailyQuote.text,
+        author: dailyQuote.author,
+        category: dailyQuote.category?.name ?? "Uncategorized",
+      }
+    : {
+        id: "quote-fallback",
+        text: "The struggle you are in today is developing the strength you need for tomorrow.",
+        author: "Motivational Weapons",
+        category: "Resilience",
+      };
+
+  const video: Video = featuredVideo
+    ? {
+        id: featuredVideo.id,
+        title: featuredVideo.title,
+        platform:
+          featuredVideo.platform === "YOUTUBE"
+            ? "YouTube"
+            : featuredVideo.platform === "FACEBOOK"
+              ? "Facebook"
+              : "Shorts",
+        duration:
+          featuredVideo.durationSeconds != null
+            ? `${Math.floor(featuredVideo.durationSeconds / 60)}:${String(
+                featuredVideo.durationSeconds % 60
+              ).padStart(2, "0")}`
+            : "Watch",
+        thumbnail: featuredVideo.thumbnailUrl ?? "",
+        url: featuredVideo.url,
+        featured: featuredVideo.featured,
+      }
+    : {
+        id: "video-fallback",
+        title: "5 AM Is a Weapon: Building the Unbreakable Morning",
+        platform: "YouTube",
+        duration: "8:42",
+        thumbnail: "",
+        url: "#",
+      };
 
   return (
     <>
@@ -102,7 +156,7 @@ export default function HomePage() {
           <h2 className="font-display text-2xl tracking-wide">
             TODAY&rsquo;S <span className="text-primary">QUOTE</span>
           </h2>
-          <QuoteCard quote={TODAYS_QUOTE} className="flex-1" />
+          <QuoteCard quote={quote} className="flex-1" />
           <Button variant="link" asChild className="w-fit px-0">
             <Link href="/quotes">Browse every quote &rarr;</Link>
           </Button>
@@ -111,7 +165,7 @@ export default function HomePage() {
           <h2 className="font-display text-2xl tracking-wide">
             FEATURED <span className="text-primary">VIDEO</span>
           </h2>
-          <VideoCard video={featuredVideo} />
+          <VideoCard video={video} />
           <Button variant="link" asChild className="w-fit px-0">
             <Link href="/videos">Watch the full library &rarr;</Link>
           </Button>

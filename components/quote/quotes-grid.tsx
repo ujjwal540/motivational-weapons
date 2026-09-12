@@ -5,19 +5,23 @@ import * as React from "react";
 import { QuoteCard } from "@/components/quote/quote-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { QUOTES, QUOTE_CATEGORIES } from "@/constants/quotes";
+import type { Quote } from "@/types";
 
-export function QuotesGrid() {
-  const [active, setActive] =
-    React.useState<(typeof QUOTE_CATEGORIES)[number]>("All");
+export function QuotesGrid({ quotes }: { quotes: Quote[] }) {
+  const quoteCategories = React.useMemo(() => {
+    const categories = Array.from(new Set(quotes.map((quote) => quote.category)));
+    return ["All", ...categories] as const;
+  }, [quotes]);
+
+  const [active, setActive] = React.useState<(typeof quoteCategories)[number]>("All");
 
   const filtered =
-    active === "All" ? QUOTES : QUOTES.filter((q) => q.category === active);
+    active === "All" ? quotes : quotes.filter((q) => q.category === active);
 
   return (
     <>
       <div className="flex flex-wrap items-center justify-center gap-2">
-        {QUOTE_CATEGORIES.map((category) => (
+        {quoteCategories.map((category) => (
           <Button
             key={category}
             size="sm"

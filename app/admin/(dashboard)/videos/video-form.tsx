@@ -43,7 +43,7 @@ export function VideoForm({
   const [state, formAction] = useActionState(action, undefined);
 
   return (
-    <form action={formAction} className="flex max-w-xl flex-col gap-5">
+    <form action={formAction} encType="multipart/form-data" className="flex max-w-xl flex-col gap-5">
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">Title</Label>
         <Input
@@ -103,6 +103,14 @@ export function VideoForm({
             {state.errors.thumbnailUrl[0]}
           </p>
         ) : null}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="thumbnailFile">Or upload thumbnail image</Label>
+        <Input id="thumbnailFile" name="thumbnailFile" type="file" accept="image/*" />
+        <p className="text-xs text-muted-foreground">
+          Uploading a file will override the URL field when saved.
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">

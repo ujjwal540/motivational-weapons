@@ -4,7 +4,8 @@ import { Flame } from "lucide-react";
 import { PageHeader } from "@/components/hero/page-header";
 import { QuoteCard } from "@/components/quote/quote-card";
 import { DailyQuotePanel } from "@/components/quote/daily-quote-panel";
-import { QUOTES, TODAYS_QUOTE } from "@/constants/quotes";
+import { prisma } from "@/lib/prisma";
+import type { Quote } from "@/types";
 
 export const metadata: Metadata = {
   title: "Daily Motivation",
@@ -14,9 +15,27 @@ export const metadata: Metadata = {
 
 const WEEK_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
-export default function DailyMotivationPage() {
+export default async function DailyMotivationPage() {
+  const quotes = await prisma.quote.findMany({
+    include: { category: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const mappedQuotes: Quote[] = quotes.map((quote) => ({
+    id: quote.id,
+    text: quote.text,
+    author: quote.author,
+    category: quote.category?.name ?? "Uncategorized",
+  }));
+
   const todayIndex = (new Date().getDay() + 6) % 7;
-  const weekQuotes = QUOTES.slice(0, 7);
+  const weekQuotes = mappedQuotes.slice(0, 7);
+  const todaysQuote = mappedQuotes[0] ?? {
+    id: "quote-fallback",
+    text: "The struggle you are in today is developing the strength you need for tomorrow.",
+    author: "Motivational Weapons",
+    category: "Resilience",
+  };
 
   return (
     <>
@@ -30,7 +49,7 @@ export default function DailyMotivationPage() {
         description="One sharp quote, every single day. Come back each morning to reload."
       />
 
-      <DailyQuotePanel initialQuote={TODAYS_QUOTE} />
+      <DailyQuotePanel initialQuote={todaysQuote} quotes={mappedQuotes} />
 
       <section className="container pb-24">
         <div className="mb-8 flex items-center gap-2">

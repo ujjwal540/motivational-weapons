@@ -7,6 +7,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 
 const postSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
@@ -40,6 +41,18 @@ function parsePostFormData(formData: FormData) {
   });
 }
 
+async function resolveCoverImageUrl(formData: FormData) {
+  const coverImageFile = formData.get("coverImageFile");
+  if (coverImageFile instanceof File && coverImageFile.size > 0) {
+    return uploadImageToCloudinary(
+      coverImageFile,
+      "motivational-weapons/blog-covers"
+    );
+  }
+
+  return String(formData.get("coverImageUrl") || "").trim() || null;
+}
+
 export async function createPost(
   _prevState: PostFormState | undefined,
   formData: FormData
@@ -59,10 +72,13 @@ export async function createPost(
   }
 
   try {
+    const coverImage = await resolveCoverImageUrl(formData);
+
     await prisma.blogPost.create({
       data: {
         ...parsed.data,
         authorId: user.id,
+        coverImage,
         publishedAt: parsed.data.status === "PUBLISHED" ? new Date() : null,
       },
     });
@@ -95,10 +111,13 @@ export async function updatePost(
   }
 
   try {
+    const coverImage = await resolveCoverImageUrl(formData);
+
     await prisma.blogPost.update({
       where: { id },
       data: {
         ...parsed.data,
+        coverImage,
         publishedAt: parsed.data.status === "PUBLISHED" ? new Date() : null,
       },
     });

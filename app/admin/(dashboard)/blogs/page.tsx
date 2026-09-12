@@ -27,6 +27,7 @@ interface PostRow {
   slug: string;
   status: string;
   featured: boolean;
+  coverImage: string | null;
   category: { id: string; name: string } | null;
 }
 
