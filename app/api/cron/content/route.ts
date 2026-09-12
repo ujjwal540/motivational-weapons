@@ -11,14 +11,29 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const [videos, post] = await Promise.all([syncLatestYouTubeVideos(), createDailyBlogPost()]);
-    revalidatePath("/");
-    revalidatePath("/videos");
-    revalidatePath("/blog");
-    return NextResponse.json({ ok: true, videos, post: post.slug });
-  } catch (error) {
-    console.error("Daily content automation failed", error);
+  const [videoResult, postResult] = await Promise.allSettled([
+    syncLatestYouTubeVideos(),
+    createDailyBlogPost(),
+  ]);
+
+  if (videoResult.status === "rejected") {
+    console.error("YouTube content sync failed", videoResult.reason);
+  }
+  if (postResult.status === "rejected") {
+    console.error("Daily blog generation failed", postResult.reason);
+  }
+
+  if (videoResult.status === "rejected" && postResult.status === "rejected") {
     return NextResponse.json({ error: "Content automation failed" }, { status: 500 });
   }
+
+  revalidatePath("/");
+  revalidatePath("/videos");
+  revalidatePath("/blog");
+  return NextResponse.json({
+    ok: true,
+    videos: videoResult.status === "fulfilled" ? videoResult.value : null,
+    post: postResult.status === "fulfilled" ? postResult.value.slug : null,
+    warnings: postResult.status === "rejected" ? ["Daily blog generation failed."] : [],
+  });
 }
